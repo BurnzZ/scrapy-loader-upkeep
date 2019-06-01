@@ -28,25 +28,23 @@ Installation
 
 Usage
 ~~~~~
-Simply replace the import of:
+.. code-block:: python
+
+    from scrapy_loader_upkeep import ItemLoader
+
+    class SiteItemLoader(ItemLoader):
+        pass
+
+Using it inside a spider callback would look like:
 
 .. code-block:: python
 
-	from scrapy.loader import ItemLoader
+    def parse(self, response):
+        loader = SiteItemLoader(response=response, stats=self.crawler.stats)
 
-	class SiteItemLoader(ItemLoader):
-	    pass
-
-into
-
-.. code-block:: python
-
-	from scrapy_loader_upkeep import ItemLoader
-
-	class SiteItemLoader(ItemLoader):
-	    pass
-
-and it will take care of the rest.
+Nothing would change in the usage of this ``ItemLoader`` except for the part on
+injecting stat dependency to it, which is necessary to keep track of the usage
+of the parser rules.
 
 Requirements
 ~~~~~~~~~~~~
