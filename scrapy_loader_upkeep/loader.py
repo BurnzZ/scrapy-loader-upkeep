@@ -1,19 +1,26 @@
-"""Challenges:
-
-- ItemLoaders doesn't have access to the crawler API which contains
-  reference to the stats API.
-
-- Could instantiate our own `scrapy.statcollectors.StatsCollector` but there's
-  no way of knowning when to dump the stats out since it's not hooked up to the
-  'close_spider' signal.
-"""
-
 from scrapy.loader import ItemLoader as ItemLoaderOG
 from scrapy.utils.misc import arg_to_iter
 from scrapy.utils.python import flatten
 
 
 class ItemLoader(ItemLoaderOG):
+    def __init__(
+        self,
+        item=None,
+        selector=None,
+        response=None,
+        parent=None,
+        stats=None,
+        **context
+    ):
+        """Adds an additional `stats` dependency to keep track of the fallback
+        parser usage.
+        """
+
+        super(ItemLoader, self).__init__(
+            item=item, selector=selector, response=response, parent=parent, **context
+        )
+        self.stats = stats
 
     # The methods below have been overridden from their parent to pass the
     # 'field_name' variable into `_get_xpathvalues()` and `_get_cssvalues()`
@@ -43,15 +50,15 @@ class ItemLoader(ItemLoaderOG):
         return self.get_value(values, *processors, **kw)
 
     # The methods below are overridden and have been refactored for integration
-    # for logging and stats.
+    # of stat logging.
 
     def _get_xpathvalues(self, field_name, xpaths, **kw):
-        return self.get_selector_values(
-            field_name, xpaths, self.selector.xpath, **kw)
+        return self.get_selector_values(field_name, xpaths, self.selector.xpath, **kw)
 
     def _get_cssvalues(self, field_name, csss, **kw):
-        return self.get_selector_values(
-            field_name, csss, self.selector.css, **kw)
+        return self.get_selector_values(field_name, csss, self.selector.css, **kw)
+
+    # The methods below are unique to this class and are not present in the parent.
 
     def get_selector_values(self, field_name, selector_rules, selector, **kw):
         """Provides an abstraction to _get_xpathvalues() and _get_cssvalues()
@@ -61,11 +68,24 @@ class ItemLoader(ItemLoaderOG):
         self._check_selector_method()
 
         values = []
-        for rule in arg_to_iter(selector_rules):
-            data = selector(rule).getall()
-            values.append(data)
-            self.stat(field_name, rule, data)
+        for position, rule in enumerate(arg_to_iter(selector_rules)):
+            parsed_data = selector(rule).getall()
+            values.append(parsed_data)
+            self.write_to_stats(field_name, rule, parsed_data, position)
         return flatten(values)
 
-    def stat(field_name, rule, data):
-        pass
+    def write_to_stats(self, field_name, rule, parsed_data, position):
+        """Responsible for logging the parser rules usage."""
+
+        if not self.stats:
+            return
+
+        if parsed_data is None:
+            return
+
+        parser_label = "parser/{}/{}/{}".format(self.loader_name, field_name, position)
+        self.stats.inc_value(parser_label)
+
+    @property
+    def loader_name(self):
+        return self.__class__.__name__
