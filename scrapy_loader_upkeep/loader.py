@@ -75,12 +75,26 @@ class ItemLoader(ItemLoaderOG):
         return flatten(values)
 
     def write_to_stats(self, field_name, rule, parsed_data, position):
-        """Responsible for logging the parser rules usage."""
+        """Responsible for logging the parser rules usage.
+
+        NOTES: It's hard to easily denote which parser rule hasn't produced any
+          data for the entire crawl, since ItemLoaders essentially don't know
+          when the spider is going to be closed, as well as it has many
+          instantiations all throughout the code.
+
+          The implementation below where each missing parsed_data is being logged
+        to the stat is clunky, but necessary. With this, we can only surmise that
+        it's safe to remove parser fallback parser if it's all just '*/missing'
+        in the stats.
+        """
 
         if not self.stats:
             return
 
         if parsed_data is None:
+            missing_parser_label = "parser/{}/{}/{}/missing".format(
+                    self.loader_name, field_name, position)
+            self.stats.inc_value(missing_parser_label)
             return
 
         parser_label = "parser/{}/{}/{}".format(self.loader_name, field_name, position)

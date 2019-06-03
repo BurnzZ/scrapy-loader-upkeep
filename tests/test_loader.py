@@ -69,9 +69,10 @@ def test_write_to_stats_with_no_parsed_data():
     loader.stats = mock.Mock()
 
     parsed_data = None
+    expected_stat_key = "parser/ItemLoader/field_name/0/missing"
 
     assert loader.write_to_stats("field_name", [], parsed_data, 0) == None
-    assert not loader.stats.inc_value.called
+    loader.stats.inc_value.assert_called_once_with(expected_stat_key)
 
 
 def test_write_to_stats():
@@ -80,5 +81,7 @@ def test_write_to_stats():
     loader = ItemLoader()
     loader.stats = mock.MagicMock()
 
+    expected_stat_key = "parser/ItemLoader/field_name/0"
+
     assert loader.write_to_stats("field_name", [], "parsed_data", 0) == None
-    loader.stats.inc_value.assert_called_once_with("parser/ItemLoader/field_name/0")
+    loader.stats.inc_value.assert_called_once_with(expected_stat_key)
