@@ -26,7 +26,7 @@ Installation
 ~~~~~~~~~~~~
 .. code-block:: bash
 
-	$ pipenv install scrapy-loader-upkeep
+    $ pipenv install scrapy-loader-upkeep
 
 Usage
 ~~~~~
