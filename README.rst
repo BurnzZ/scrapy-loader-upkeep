@@ -20,6 +20,8 @@ A/B tests for weeks/months where developers need to accommodate those changes.
 These fallback css/xpath rules gets obsolete quickly and fills up the project
 with potentially dead code, posing a threat to the spiders' long term maintenance.
 
+Original idea proposal: https://github.com/scrapy/scrapy/issues/3795
+
 Installation
 ~~~~~~~~~~~~
 .. code-block:: bash
