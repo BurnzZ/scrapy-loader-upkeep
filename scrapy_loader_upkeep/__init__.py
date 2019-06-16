@@ -1,1 +1,1 @@
-from scrapy_loader_upkeep.loader import ItemLoader
+from .loader import ItemLoader
