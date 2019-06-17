@@ -91,7 +91,7 @@ class ItemLoader(ItemLoaderOG):
         if not self.stats:
             return
 
-        if parsed_data is None:
+        if parsed_data in (None, []):
             missing_parser_label = "parser/{}/{}/{}/missing".format(
                     self.loader_name, field_name, position)
             self.stats.inc_value(missing_parser_label)
