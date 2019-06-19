@@ -22,12 +22,6 @@ with potentially dead code, posing a threat to the spiders' long term maintenanc
 
 Original idea proposal: https://github.com/scrapy/scrapy/issues/3795
 
-Installation
-~~~~~~~~~~~~
-.. code-block:: bash
-
-    $ pipenv install scrapy-loader-upkeep
-
 Usage
 ~~~~~
 .. code-block:: python
