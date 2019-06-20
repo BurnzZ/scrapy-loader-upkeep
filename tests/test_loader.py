@@ -44,9 +44,9 @@ def test_get_selector_values():
 
     loader.write_to_stats.assert_has_calls(
         [
-            mock.call(field_name, selector_rules[0], parsed_data, 0),
-            mock.call(field_name, selector_rules[1], parsed_data, 1),
-            mock.call(field_name, selector_rules[2], parsed_data, 2),
+            mock.call(field_name, parsed_data, 0),
+            mock.call(field_name, parsed_data, 1),
+            mock.call(field_name, parsed_data, 2),
         ]
     )
 
@@ -58,7 +58,7 @@ def test_write_to_stats_with_uninjected_stat_dependency():
     loader.stats = mock.MagicMock()
     loader.stats.__nonzero__.return_value = False  # don't pass the if-condition
 
-    assert loader.write_to_stats("field_name", [], "parsed_data", 0) == None
+    assert loader.write_to_stats("field_name", "parsed_data", 0) == None
     assert not loader.stats.inc_value.called
 
 
@@ -71,7 +71,7 @@ def test_write_to_stats_with_no_parsed_data():
     parsed_data = None
     expected_stat_key = "parser/ItemLoader/field_name/0/missing"
 
-    assert loader.write_to_stats("field_name", [], parsed_data, 0) == None
+    assert loader.write_to_stats("field_name", parsed_data, 0) == None
     loader.stats.inc_value.assert_called_once_with(expected_stat_key)
 
 
@@ -84,11 +84,11 @@ def test_write_to_stats():
     expected_stat_key = "parser/ItemLoader/field_name/0"
 
     # Rules with values
-    assert loader.write_to_stats("field_name", [], "parsed_data", 0) == None
+    assert loader.write_to_stats("field_name", "parsed_data", 0) == None
 
     # Rules that hasn't rendered any values
-    assert loader.write_to_stats("field_name", [], None, 0) == None
-    assert loader.write_to_stats("field_name", [], [], 0) == None
+    assert loader.write_to_stats("field_name", None, 0) == None
+    assert loader.write_to_stats("field_name", [], 0) == None
 
     # loader.stats.inc_value.assert_called_once_with(expected_stat_key)
     loader.stats.inc_value.assert_has_calls(

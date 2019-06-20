@@ -71,10 +71,10 @@ class ItemLoader(ItemLoaderOG):
         for position, rule in enumerate(arg_to_iter(selector_rules)):
             parsed_data = selector(rule).getall()
             values.append(parsed_data)
-            self.write_to_stats(field_name, rule, parsed_data, position)
+            self.write_to_stats(field_name, parsed_data, position)
         return flatten(values)
 
-    def write_to_stats(self, field_name, rule, parsed_data, position):
+    def write_to_stats(self, field_name, parsed_data, position):
         """Responsible for logging the parser rules usage.
 
         NOTES: It's hard to easily denote which parser rule hasn't produced any
@@ -82,10 +82,10 @@ class ItemLoader(ItemLoaderOG):
           when the spider is going to be closed, as well as it has many
           instantiations all throughout the code.
 
-          The implementation below where each missing parsed_data is being logged
-        to the stat is clunky, but necessary. With this, we can only surmise that
-        it's safe to remove parser fallback parser if it's all just '*/missing'
-        in the stats.
+        The implementation below where each missing parsed_data is being logged
+        to the stat is clunky, but necessary. With this, we can only surmise
+        that it's safe to remove parser fallback parser if it's all just
+        '*/missing' in the stats.
         """
 
         if not self.stats:
