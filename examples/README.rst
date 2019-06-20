@@ -14,8 +14,8 @@ This should output in the stats:
 
    2019-06-16 14:32:32 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
    { ...
-     'parser/QuotesItemLoader/author/0': 10,
-     'parser/QuotesItemLoader/quote/0': 10,
+     'parser/QuotesItemLoader/author/1': 10,
+     'parser/QuotesItemLoader/quote/1': 10,
      ...
    }
 
@@ -36,8 +36,8 @@ This should output in the stats:
 
    2019-06-16 14:32:32 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
    { ...
-     'parser/QuotesItemLoader/author/0': 10,
-     'parser/QuotesItemLoader/quote/0/missing': 10,
-     'parser/QuotesItemLoader/quote/1': 10
+     'parser/QuotesItemLoader/author/1': 10,
+     'parser/QuotesItemLoader/quote/1/missing': 10,
+     'parser/QuotesItemLoader/quote/2': 10
      ...
    }

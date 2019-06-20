@@ -68,7 +68,7 @@ class ItemLoader(ItemLoaderOG):
         self._check_selector_method()
 
         values = []
-        for position, rule in enumerate(arg_to_iter(selector_rules)):
+        for position, rule in enumerate(arg_to_iter(selector_rules), 1):
             parsed_data = selector(rule).getall()
             values.append(parsed_data)
             self.write_to_stats(field_name, parsed_data, position)
