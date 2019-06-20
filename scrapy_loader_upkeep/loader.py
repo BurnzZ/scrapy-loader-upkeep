@@ -67,14 +67,16 @@ class ItemLoader(ItemLoaderOG):
 
         self._check_selector_method()
 
+        selector_type = selector.__name__  # either 'css' or 'xpath'
+
         values = []
         for position, rule in enumerate(arg_to_iter(selector_rules), 1):
             parsed_data = selector(rule).getall()
             values.append(parsed_data)
-            self.write_to_stats(field_name, parsed_data, position)
+            self.write_to_stats(field_name, parsed_data, position, selector_type)
         return flatten(values)
 
-    def write_to_stats(self, field_name, parsed_data, position):
+    def write_to_stats(self, field_name, parsed_data, position, selector_type):
         """Responsible for logging the parser rules usage.
 
         NOTES: It's hard to easily denote which parser rule hasn't produced any
@@ -92,12 +94,13 @@ class ItemLoader(ItemLoaderOG):
             return
 
         if parsed_data in (None, []):
-            missing_parser_label = "parser/{}/{}/{}/missing".format(
-                    self.loader_name, field_name, position)
+            missing_parser_label = "parser/{}/{}/{}/{}/missing".format(
+                    self.loader_name, field_name, selector_type, position)
             self.stats.inc_value(missing_parser_label)
             return
 
-        parser_label = "parser/{}/{}/{}".format(self.loader_name, field_name, position)
+        parser_label = "parser/{}/{}/{}/{}".format(
+                self.loader_name, field_name, selector_type, position)
         self.stats.inc_value(parser_label)
 
     @property

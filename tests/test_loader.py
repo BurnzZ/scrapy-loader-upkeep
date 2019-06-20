@@ -23,6 +23,7 @@ def test_get_selector_values():
 
     mock_selector = mock.Mock()
     mock_selector().getall.return_value = parsed_data
+    mock_selector.__name__ = 'css'
 
     loader = ItemLoader(selector=mock_selector)
     loader.write_to_stats = mock.Mock()
@@ -44,9 +45,9 @@ def test_get_selector_values():
 
     loader.write_to_stats.assert_has_calls(
         [
-            mock.call(field_name, parsed_data, 1),
-            mock.call(field_name, parsed_data, 2),
-            mock.call(field_name, parsed_data, 3),
+            mock.call(field_name, parsed_data, 1, 'css'),
+            mock.call(field_name, parsed_data, 2, 'css'),
+            mock.call(field_name, parsed_data, 3, 'css'),
         ]
     )
 
@@ -58,7 +59,7 @@ def test_write_to_stats_with_uninjected_stat_dependency():
     loader.stats = mock.MagicMock()
     loader.stats.__nonzero__.return_value = False  # don't pass the if-condition
 
-    assert loader.write_to_stats("field_name", "parsed_data", 0) == None
+    assert loader.write_to_stats("field_name", "parsed_data", 0, 'xpath') == None
     assert not loader.stats.inc_value.called
 
 
@@ -69,9 +70,9 @@ def test_write_to_stats_with_no_parsed_data():
     loader.stats = mock.Mock()
 
     parsed_data = None
-    expected_stat_key = "parser/ItemLoader/field_name/0/missing"
+    expected_stat_key = "parser/ItemLoader/field_name/css/0/missing"
 
-    assert loader.write_to_stats("field_name", parsed_data, 0) == None
+    assert loader.write_to_stats("field_name", parsed_data, 0, 'css') == None
     loader.stats.inc_value.assert_called_once_with(expected_stat_key)
 
 
@@ -81,20 +82,20 @@ def test_write_to_stats():
     loader = ItemLoader()
     loader.stats = mock.MagicMock()
 
-    expected_stat_key = "parser/ItemLoader/field_name/0"
+    expected_stat_key = "parser/ItemLoader/field_name/css/0"
 
     # Rules with values
-    assert loader.write_to_stats("field_name", "parsed_data", 123) == None
+    assert loader.write_to_stats("field_name", "parsed_data", 123, 'css') == None
 
     # Rules that hasn't rendered any values
-    assert loader.write_to_stats("field_name", None, 456) == None
-    assert loader.write_to_stats("field_name", [], 789) == None
+    assert loader.write_to_stats("field_name", None, 456, 'css') == None
+    assert loader.write_to_stats("field_name", [], 789, 'css') == None
 
     # loader.stats.inc_value.assert_called_once_with(expected_stat_key)
     loader.stats.inc_value.assert_has_calls(
         [
-            mock.call('parser/ItemLoader/field_name/123'),
-            mock.call('parser/ItemLoader/field_name/456/missing'),
-            mock.call('parser/ItemLoader/field_name/789/missing'),
+            mock.call('parser/ItemLoader/field_name/css/123'),
+            mock.call('parser/ItemLoader/field_name/css/456/missing'),
+            mock.call('parser/ItemLoader/field_name/css/789/missing'),
         ]
     )
