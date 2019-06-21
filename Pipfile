@@ -6,9 +6,10 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 mock = "*"
+tox = "*"
 
 [packages]
 scrapy = "*"
 
 [requires]
-python_version = "2.7"
+python_version = "3.6"

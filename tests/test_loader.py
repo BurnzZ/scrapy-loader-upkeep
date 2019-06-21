@@ -1,5 +1,5 @@
-import mock
 import pytest
+from unittest import mock
 
 from scrapy_loader_upkeep import ItemLoader
 from scrapy.utils.python import flatten
@@ -57,7 +57,7 @@ def test_write_to_stats_with_uninjected_stat_dependency():
 
     loader = ItemLoader()
     loader.stats = mock.MagicMock()
-    loader.stats.__nonzero__.return_value = False  # don't pass the if-condition
+    loader.stats.__bool__.return_value = False  # don't pass the if-condition
 
     assert loader.write_to_stats("field_name", "parsed_data", 0, 'xpath') == None
     assert not loader.stats.inc_value.called

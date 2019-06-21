@@ -44,4 +44,4 @@ of the parser rules.
 
 Requirements
 ~~~~~~~~~~~~
-Python 2.7 or Python 3.4+ (*should be the same with Scrapy*)
+Python 3.6+
