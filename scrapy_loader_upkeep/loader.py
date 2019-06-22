@@ -11,7 +11,7 @@ class ItemLoader(ItemLoaderOG):
         response=None,
         parent=None,
         stats=None,
-        **context
+        **context,
     ):
         """Adds an additional `stats` dependency to keep track of the fallback
         parser usage.
@@ -93,16 +93,13 @@ class ItemLoader(ItemLoaderOG):
         if not self.stats:
             return
 
-        if parsed_data in (None, []):
-            missing_parser_label = "parser/{}/{}/{}/{}/missing".format(
-                self.loader_name, field_name, selector_type, position
-            )
-            self.stats.inc_value(missing_parser_label)
-            return
-
-        parser_label = "parser/{}/{}/{}/{}".format(
-            self.loader_name, field_name, selector_type, position
+        parser_label = (
+            f"parser/{self.loader_name}/{field_name}/{selector_type}/{position}"
         )
+
+        if parsed_data in (None, []):
+            parser_label += "/missing"
+
         self.stats.inc_value(parser_label)
 
     @property
