@@ -95,12 +95,14 @@ class ItemLoader(ItemLoaderOG):
 
         if parsed_data in (None, []):
             missing_parser_label = "parser/{}/{}/{}/{}/missing".format(
-                    self.loader_name, field_name, selector_type, position)
+                self.loader_name, field_name, selector_type, position
+            )
             self.stats.inc_value(missing_parser_label)
             return
 
         parser_label = "parser/{}/{}/{}/{}".format(
-                self.loader_name, field_name, selector_type, position)
+            self.loader_name, field_name, selector_type, position
+        )
         self.stats.inc_value(parser_label)
 
     @property
