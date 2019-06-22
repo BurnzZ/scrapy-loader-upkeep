@@ -3,6 +3,8 @@ from unittest import mock
 
 from scrapy_loader_upkeep import ItemLoader
 from scrapy.utils.python import flatten
+from scrapy.http import TextResponse
+from scrapy import Item, Field
 
 
 def test_get_selector_values_with_no_selector():
@@ -91,7 +93,6 @@ def test_write_to_stats():
     assert loader.write_to_stats("field_name", None, 456, "css") == None
     assert loader.write_to_stats("field_name", [], 789, "css") == None
 
-    # loader.stats.inc_value.assert_called_once_with(expected_stat_key)
     loader.stats.inc_value.assert_has_calls(
         [
             mock.call("parser/ItemLoader/field_name/css/123"),
@@ -99,3 +100,70 @@ def test_write_to_stats():
             mock.call("parser/ItemLoader/field_name/css/789/missing"),
         ]
     )
+
+
+TEST_HTML_BODY = """
+<html>
+    <title>This is a title</title>
+    <body>
+        <article>
+            <h2>Product #1</h2>
+            <span class='price'>$1.23</span>
+        </article>
+
+        <article>
+            <div class='product-title'>Product #2</div>
+            <span class='price'>$9.99</span>
+        </article>
+    </body>
+</html>
+"""
+RESPONSE = TextResponse('https://test.com', body=TEST_HTML_BODY, encoding='utf-8')
+
+
+class TestItem(Item):
+    title = Field()
+
+
+class TestItemLoader(ItemLoader):
+    default_item_class = TestItem
+
+
+@pytest.fixture()
+def loader():
+    mock_stats = mock.MagicMock()
+    loader = TestItemLoader(response=RESPONSE, stats=mock_stats)
+    return loader
+
+
+# NOTES: We'll be using the 'css' methods of ItemLoader below. The 'xpath' 
+#   methods are also using the 'get_selector_values()' method underneath, the
+#   same with 'css'. So we'll assume that 'xpath' would also pass the test
+#   if 'css' passes.
+
+# This assumption will hold true for now, since the current implementation of
+# the 'css' and 'xpath' methods are just facades to the 'get_selector_values()'.
+
+
+def test_add_css_1(loader):
+    loader.add_css('title', 'article h2::text')
+    loader.stats.inc_value.assert_has_calls(
+        [
+            mock.call("parser/TestItemLoader/title/css/1"),
+        ]
+    )
+    assert loader.stats.inc_value.call_count == 1
+
+
+def test_add_css_2(loader):
+    loader.add_css('title', [
+        'article h2::text',
+        'article .product-title::text',
+    ])
+    loader.stats.inc_value.assert_has_calls(
+        [
+            mock.call("parser/TestItemLoader/title/css/1"),
+            mock.call("parser/TestItemLoader/title/css/2"),
+        ]
+    )
+    assert loader.stats.inc_value.call_count == 2
