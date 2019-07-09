@@ -167,3 +167,13 @@ def test_add_css_2(loader):
         ]
     )
     assert loader.stats.inc_value.call_count == 2
+
+
+def test_add_css_3_missing(loader):
+    loader.add_css('title', 'h1::text')  # The <h1> doesn't exist at all.
+    loader.stats.inc_value.assert_has_calls(
+        [
+            mock.call("parser/TestItemLoader/title/css/1/missing"),
+        ]
+    )
+    assert loader.stats.inc_value.call_count == 1
