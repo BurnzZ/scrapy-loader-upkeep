@@ -1,3 +1,4 @@
+from collections import defaultdict
 from scrapy.loader import ItemLoader as ItemLoaderOG
 from scrapy.utils.misc import arg_to_iter
 from scrapy.utils.python import flatten
@@ -20,12 +21,20 @@ class ItemLoader(ItemLoaderOG):
         super(ItemLoader, self).__init__(
             item=item, selector=selector, response=response, parent=parent, **context
         )
+
+        # This is the new injected dependency that we'll be using as the main
+        # functionality of this tool.
         self.stats = stats
+
+        # This keeps track of the position of the 'field' name that is being
+        # loaded for a more accurate logging in the stats.
+        self.field_tracker = defaultdict(int)
 
     # The methods below have been overridden from their parent to pass the
     # 'field_name' variable into `_get_xpathvalues()` and `_get_cssvalues()`
 
     def add_xpath(self, field_name, xpath, *processors, **kw):
+        self.field_tracker[f'{field_name}_xpath'] += 1
         values = self._get_xpathvalues(field_name, xpath, **kw)
         self.add_value(field_name, values, *processors, **kw)
 
@@ -38,6 +47,7 @@ class ItemLoader(ItemLoaderOG):
         return self.get_value(values, *processors, **kw)
 
     def add_css(self, field_name, css, *processors, **kw):
+        self.field_tracker[f'{field_name}_css'] += 1
         values = self._get_cssvalues(field_name, css, **kw)
         self.add_value(field_name, values, *processors, **kw)
 
@@ -69,8 +79,12 @@ class ItemLoader(ItemLoaderOG):
 
         selector_type = selector.__name__  # either 'css' or 'xpath'
 
+        # For every call of `add_css()` and `add_xpath()` this is incremented.
+        # We'll use it as the base index of the position of the logged stats.
+        index = self.field_tracker[f'{field_name}_{selector_type}']
+
         values = []
-        for position, rule in enumerate(arg_to_iter(selector_rules), 1):
+        for position, rule in enumerate(arg_to_iter(selector_rules), index):
             parsed_data = selector(rule).getall()
             values.append(parsed_data)
             self.write_to_stats(field_name, parsed_data, position, selector_type)

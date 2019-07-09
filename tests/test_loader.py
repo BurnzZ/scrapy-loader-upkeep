@@ -30,6 +30,9 @@ def test_get_selector_values():
     loader = ItemLoader(selector=mock_selector)
     loader.write_to_stats = mock.Mock()
 
+    # This wasn't actually initialized so it will return 0 by default otherwise.
+    loader.field_tracker['field_css'] = 1
+
     result = loader.get_selector_values(field_name, selector_rules, mock_selector)
 
     assert result == flatten([parsed_data] * len(selector_rules))
@@ -177,3 +180,31 @@ def test_add_css_3_missing(loader):
         ]
     )
     assert loader.stats.inc_value.call_count == 1
+
+
+def test_multiple_1(loader):
+    loader.add_css('title', 'h2::text')
+    loader.add_css('title', [
+        'article h2::text',
+        'article .product-title::text',
+    ])
+    loader.stats.inc_value.assert_has_calls(
+        [
+            mock.call("parser/TestItemLoader/title/css/1"),
+            mock.call("parser/TestItemLoader/title/css/2"),
+            mock.call("parser/TestItemLoader/title/css/3"),
+        ]
+    )
+
+
+def test_multiple_2(loader):
+    loader.add_css('title', 'h2::text')
+    loader.add_xpath('title', '//article/h2/text()')
+    loader.add_css('title', 'article .product-title::text')
+    loader.stats.inc_value.assert_has_calls(
+        [
+            mock.call("parser/TestItemLoader/title/css/1"),
+            mock.call("parser/TestItemLoader/title/xpath/1"),
+            mock.call("parser/TestItemLoader/title/css/2"),
+        ]
+    )
