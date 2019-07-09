@@ -45,6 +45,31 @@ Nothing would change in the usage of this ``ItemLoader`` except for the part on
 injecting stat dependency to it, which is necessary to keep track of the usage
 of the parser rules.
 
+Spider Example
+~~~~~~~~~~~~~~
+This is taken from the `examples/ 
+<https://github.com/BurnzZ/scrapy-loader-upkeep/tree/master/examples>`_
+directory.
+
+.. code-block:: bash
+
+   $ scrapy crawl quotestoscrape_simple_has_missing
+
+This should output in the stats:
+
+.. code-block:: python
+
+   2019-06-16 14:32:32 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+   { ...
+     'parser/QuotesItemLoader/author/css/1': 10,
+     'parser/QuotesItemLoader/quote/css/1/missing': 10,
+     'parser/QuotesItemLoader/quote/css/2': 10
+     ...
+   }
+
+In this example, we could see that the **1st css** rule for the ``quote`` field
+has had instances of not being matched at all during the scrape.
+
 Requirements
 ~~~~~~~~~~~~
 Python 3.6+
