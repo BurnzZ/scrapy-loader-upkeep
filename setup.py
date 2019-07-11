@@ -12,7 +12,7 @@ with open(os.path.join(this_dir, 'scrapy_loader_upkeep', '__version__.py')) as f
     exec(f.read(), about)
 
 setup(
-    name='',
+    name='scrapy-loader-upkeep',
     version=about['__version__'],
     description=(
         'An alternative to the built-in ItemLoader of Scrapy which focuses on '
