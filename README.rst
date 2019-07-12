@@ -1,6 +1,12 @@
 scrapy-loader-upkeep 
 ====================
 
+.. image:: https://img.shields.io/pypi/pyversions/scrapy-loader-upkeep.svg
+    :target: https://pypi.python.org/pypi/scrapy-loader-upkeep
+
+.. image:: https://img.shields.io/pypi/v/scrapy-loader-upkeep.svg
+    :target: https://pypi.python.org/pypi/scrapy-loader-upkeep
+
 .. image:: https://travis-ci.org/BurnzZ/scrapy-loader-upkeep.svg?branch=master
     :target: https://travis-ci.org/BurnzZ/scrapy-loader-upkeep
 
