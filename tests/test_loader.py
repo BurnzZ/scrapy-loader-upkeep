@@ -81,6 +81,16 @@ def test_write_to_stats_with_no_parsed_data():
     loader.stats.inc_value.assert_called_once_with(expected_stat_key)
 
 
+def test_write_to_stats_with_no_field_name():
+    """It should not call stats when the 'field_name' passed is None."""
+
+    loader = ItemLoader()
+    loader.stats = mock.Mock()
+
+    assert loader.write_to_stats(None, "sample data", 0, "css") == None
+    loader.stats.inc_value.assert_not_called()
+
+
 def test_write_to_stats():
     """It should incremenent the correct key in the stat."""
 

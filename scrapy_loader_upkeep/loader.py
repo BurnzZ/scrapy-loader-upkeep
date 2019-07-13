@@ -43,7 +43,7 @@ class ItemLoader(ItemLoaderOG):
         self.replace_value(field_name, values, *processors, **kw)
 
     def get_xpath(self, xpath, *processors, **kw):
-        values = self._get_xpathvalues(field_name, xpath, **kw)
+        values = self._get_xpathvalues(None, xpath, **kw)
         return self.get_value(values, *processors, **kw)
 
     def add_css(self, field_name, css, *processors, **kw):
@@ -56,7 +56,7 @@ class ItemLoader(ItemLoaderOG):
         self.replace_value(field_name, values, *processors, **kw)
 
     def get_css(self, css, *processors, **kw):
-        values = self._get_cssvalues(field_name, css, **kw)
+        values = self._get_cssvalues(None, css, **kw)
         return self.get_value(values, *processors, **kw)
 
     # The methods below are overridden and have been refactored for integration
@@ -104,7 +104,7 @@ class ItemLoader(ItemLoaderOG):
         '*/missing' in the stats.
         """
 
-        if not self.stats:
+        if not self.stats or not field_name:
             return
 
         parser_label = (
