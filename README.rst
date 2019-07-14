@@ -51,6 +51,13 @@ Nothing would change in the usage of this ``ItemLoader`` except for the part on
 injecting stat dependency to it, which is necessary to keep track of the usage
 of the parser rules.
 
+This only works for the following ``ItemLoader`` methods:
+
+   - ``add_css()``
+   - ``replace_css()``
+   - ``add_xpath()``
+   - ``replace_xpath()``
+
 Spider Example
 ~~~~~~~~~~~~~~
 This is taken from the `examples/ 
