@@ -50,9 +50,9 @@ def test_get_selector_values():
 
     loader.write_to_stats.assert_has_calls(
         [
-            mock.call(field_name, parsed_data, 1, "css"),
-            mock.call(field_name, parsed_data, 2, "css"),
-            mock.call(field_name, parsed_data, 3, "css"),
+            mock.call(field_name, parsed_data, 1, "css", name=None),
+            mock.call(field_name, parsed_data, 2, "css", name=None),
+            mock.call(field_name, parsed_data, 3, "css", name=None),
         ]
     )
 
@@ -205,16 +205,36 @@ def test_multiple_1(loader):
             mock.call("parser/TestItemLoader/title/css/3"),
         ]
     )
+    assert loader.stats.inc_value.call_count == 3
 
 
-def test_multiple_2(loader):
-    loader.add_css('title', 'h2::text')
-    loader.add_xpath('title', '//article/h2/text()')
-    loader.add_css('title', 'article .product-title::text')
+def test_multiple_1_with_name(loader):
+    loader.add_css('title', 'h2::text', name='title from h2')
+    loader.add_css('title', [
+        'article h2::text',
+        'article .product-title::text',
+    ], name='title from article')
     loader.stats.inc_value.assert_has_calls(
         [
-            mock.call("parser/TestItemLoader/title/css/1"),
-            mock.call("parser/TestItemLoader/title/xpath/1"),
-            mock.call("parser/TestItemLoader/title/css/2"),
+            mock.call("parser/TestItemLoader/title/css/1/title from h2"),
+            mock.call("parser/TestItemLoader/title/css/2/title from article"),
+            mock.call("parser/TestItemLoader/title/css/3/title from article"),
         ]
     )
+    assert loader.stats.inc_value.call_count == 3
+
+
+def test_multiple_2_with_name(loader):
+    loader.add_css('title', 'h2::text', name='title from h2')
+    loader.add_xpath('title', '//article/h2/text()', name='title from article')
+    loader.add_css('title', 'article .product-title::text')
+    loader.add_xpath('title', '//aside/h1/text()', name='title from aside')
+    loader.stats.inc_value.assert_has_calls(
+        [
+            mock.call("parser/TestItemLoader/title/css/1/title from h2"),
+            mock.call("parser/TestItemLoader/title/xpath/1/title from article"),
+            mock.call("parser/TestItemLoader/title/css/2"),
+            mock.call("parser/TestItemLoader/title/xpath/2/title from aside/missing"),
+        ]
+    )
+    assert loader.stats.inc_value.call_count == 4

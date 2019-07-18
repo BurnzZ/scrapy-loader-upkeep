@@ -79,6 +79,9 @@ class ItemLoader(ItemLoaderOG):
 
         selector_type = selector.__name__  # either 'css' or 'xpath'
 
+        # The optional arg in methods like `add_css()` for context in stats
+        name = kw.get('name')
+
         # For every call of `add_css()` and `add_xpath()` this is incremented.
         # We'll use it as the base index of the position of the logged stats.
         index = self.field_tracker[f'{field_name}_{selector_type}']
@@ -87,10 +90,12 @@ class ItemLoader(ItemLoaderOG):
         for position, rule in enumerate(arg_to_iter(selector_rules), index):
             parsed_data = selector(rule).getall()
             values.append(parsed_data)
-            self.write_to_stats(field_name, parsed_data, position, selector_type)
+            self.write_to_stats(field_name, parsed_data, position,
+                                selector_type, name=name)
         return flatten(values)
 
-    def write_to_stats(self, field_name, parsed_data, position, selector_type):
+    def write_to_stats(self, field_name, parsed_data, position, selector_type,
+                       name=None):
         """Responsible for logging the parser rules usage.
 
         NOTES: It's hard to easily denote which parser rule hasn't produced any
@@ -110,6 +115,9 @@ class ItemLoader(ItemLoaderOG):
         parser_label = (
             f"parser/{self.loader_name}/{field_name}/{selector_type}/{position}"
         )
+
+        if name:
+            parser_label += f'/{name}'
 
         if parsed_data in (None, []):
             parser_label += "/missing"
