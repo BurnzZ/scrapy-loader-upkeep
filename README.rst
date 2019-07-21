@@ -53,10 +53,10 @@ of the parser rules.
 
 This only works for the following ``ItemLoader`` methods:
 
-   - ``add_css()``
-   - ``replace_css()``
-   - ``add_xpath()``
-   - ``replace_xpath()``
+- ``add_css()``
+- ``replace_css()``
+- ``add_xpath()``
+- ``replace_xpath()``
 
 Basic Spider Example
 ~~~~~~~~~~~~~~~~~~~~
