@@ -10,4 +10,4 @@ ci:
 	pipenv run pytest --verbose
 
 clean:
-	rm -rf *.egg-info .eggs dist .pytest_cache .tox
+	rm -rf *.egg-info .eggs dist .pytest_cache .tox dist/ build/
