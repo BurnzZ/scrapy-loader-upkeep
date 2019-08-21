@@ -10,6 +10,9 @@ scrapy-loader-upkeep
 .. image:: https://travis-ci.org/BurnzZ/scrapy-loader-upkeep.svg?branch=master
     :target: https://travis-ci.org/BurnzZ/scrapy-loader-upkeep
 
+.. image:: https://codecov.io/gh/BurnzZ/scrapy-loader-upkeep/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/BurnzZ/scrapy-loader-upkeep
+
 Overview
 ~~~~~~~~
 This improves over the built-in `ItemLoader` of **Scrapy** by adding features

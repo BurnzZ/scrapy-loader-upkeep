@@ -8,4 +8,6 @@ matrix:
 install: "make"
 script:
   - "make ci"
+after_success:
+  - "make coverage"
 cache: pip

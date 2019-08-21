@@ -7,7 +7,10 @@ test:
 	tox
 
 ci:
-	pipenv run pytest --verbose
+	pipenv run pytest --cov --cov-config .coveragerc --verbose
+
+coverage:
+	codecov
 
 clean:
 	rm -rf *.egg-info .eggs dist .pytest_cache .tox dist/ build/
