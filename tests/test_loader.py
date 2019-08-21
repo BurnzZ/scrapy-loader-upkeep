@@ -31,7 +31,7 @@ def test_get_selector_values():
     loader.write_to_stats = mock.Mock()
 
     # This wasn't actually initialized so it will return 0 by default otherwise.
-    loader.field_tracker['field_css'] = 1
+    loader.field_tracker["field_css"] = 1
 
     result = loader.get_selector_values(field_name, selector_rules, mock_selector)
 
@@ -131,7 +131,7 @@ TEST_HTML_BODY = """
     </body>
 </html>
 """
-RESPONSE = TextResponse('https://test.com', body=TEST_HTML_BODY, encoding='utf-8')
+RESPONSE = TextResponse("https://test.com", body=TEST_HTML_BODY, encoding="utf-8")
 
 
 class TestItem(Item):
@@ -149,7 +149,7 @@ def loader():
     return loader
 
 
-# NOTES: We'll be using the 'css' methods of ItemLoader below. The 'xpath' 
+# NOTES: We'll be using the 'css' methods of ItemLoader below. The 'xpath'
 #   methods are also using the 'get_selector_values()' method underneath, the
 #   same with 'css'. So we'll assume that 'xpath' would also pass the test
 #   if 'css' passes.
@@ -159,20 +159,15 @@ def loader():
 
 
 def test_add_css_1(loader):
-    loader.add_css('title', 'article h2::text')
+    loader.add_css("title", "article h2::text")
     loader.stats.inc_value.assert_has_calls(
-        [
-            mock.call("parser/TestItemLoader/title/css/1"),
-        ]
+        [mock.call("parser/TestItemLoader/title/css/1")]
     )
     assert loader.stats.inc_value.call_count == 1
 
 
 def test_add_css_2(loader):
-    loader.add_css('title', [
-        'article h2::text',
-        'article .product-title::text',
-    ])
+    loader.add_css("title", ["article h2::text", "article .product-title::text"])
     loader.stats.inc_value.assert_has_calls(
         [
             mock.call("parser/TestItemLoader/title/css/1"),
@@ -183,21 +178,16 @@ def test_add_css_2(loader):
 
 
 def test_add_css_3_missing(loader):
-    loader.add_css('title', 'h1::text')  # The <h1> doesn't exist at all.
+    loader.add_css("title", "h1::text")  # The <h1> doesn't exist at all.
     loader.stats.inc_value.assert_has_calls(
-        [
-            mock.call("parser/TestItemLoader/title/css/1/missing"),
-        ]
+        [mock.call("parser/TestItemLoader/title/css/1/missing")]
     )
     assert loader.stats.inc_value.call_count == 1
 
 
 def test_multiple_1(loader):
-    loader.add_css('title', 'h2::text')
-    loader.add_css('title', [
-        'article h2::text',
-        'article .product-title::text',
-    ])
+    loader.add_css("title", "h2::text")
+    loader.add_css("title", ["article h2::text", "article .product-title::text"])
     loader.stats.inc_value.assert_has_calls(
         [
             mock.call("parser/TestItemLoader/title/css/1"),
@@ -209,11 +199,12 @@ def test_multiple_1(loader):
 
 
 def test_multiple_1_with_name(loader):
-    loader.add_css('title', 'h2::text', name='title from h2')
-    loader.add_css('title', [
-        'article h2::text',
-        'article .product-title::text',
-    ], name='title from article')
+    loader.add_css("title", "h2::text", name="title from h2")
+    loader.add_css(
+        "title",
+        ["article h2::text", "article .product-title::text"],
+        name="title from article",
+    )
     loader.stats.inc_value.assert_has_calls(
         [
             mock.call("parser/TestItemLoader/title/css/1/title from h2"),
@@ -225,10 +216,10 @@ def test_multiple_1_with_name(loader):
 
 
 def test_multiple_2_with_name(loader):
-    loader.add_css('title', 'h2::text', name='title from h2')
-    loader.add_xpath('title', '//article/h2/text()', name='title from article')
-    loader.add_css('title', 'article .product-title::text')
-    loader.add_xpath('title', '//aside/h1/text()', name='title from aside')
+    loader.add_css("title", "h2::text", name="title from h2")
+    loader.add_xpath("title", "//article/h2/text()", name="title from article")
+    loader.add_css("title", "article .product-title::text")
+    loader.add_xpath("title", "//aside/h1/text()", name="title from aside")
     loader.stats.inc_value.assert_has_calls(
         [
             mock.call("parser/TestItemLoader/title/css/1/title from h2"),

@@ -34,7 +34,7 @@ class ItemLoader(ItemLoaderOG):
     # 'field_name' variable into `_get_xpathvalues()` and `_get_cssvalues()`
 
     def add_xpath(self, field_name, xpath, *processors, **kw):
-        self.field_tracker[f'{field_name}_xpath'] += 1
+        self.field_tracker[f"{field_name}_xpath"] += 1
         values = self._get_xpathvalues(field_name, xpath, **kw)
         self.add_value(field_name, values, *processors, **kw)
 
@@ -47,7 +47,7 @@ class ItemLoader(ItemLoaderOG):
         return self.get_value(values, *processors, **kw)
 
     def add_css(self, field_name, css, *processors, **kw):
-        self.field_tracker[f'{field_name}_css'] += 1
+        self.field_tracker[f"{field_name}_css"] += 1
         values = self._get_cssvalues(field_name, css, **kw)
         self.add_value(field_name, values, *processors, **kw)
 
@@ -80,22 +80,24 @@ class ItemLoader(ItemLoaderOG):
         selector_type = selector.__name__  # either 'css' or 'xpath'
 
         # The optional arg in methods like `add_css()` for context in stats
-        name = kw.get('name')
+        name = kw.get("name")
 
         # For every call of `add_css()` and `add_xpath()` this is incremented.
         # We'll use it as the base index of the position of the logged stats.
-        index = self.field_tracker[f'{field_name}_{selector_type}']
+        index = self.field_tracker[f"{field_name}_{selector_type}"]
 
         values = []
         for position, rule in enumerate(arg_to_iter(selector_rules), index):
             parsed_data = selector(rule).getall()
             values.append(parsed_data)
-            self.write_to_stats(field_name, parsed_data, position,
-                                selector_type, name=name)
+            self.write_to_stats(
+                field_name, parsed_data, position, selector_type, name=name
+            )
         return flatten(values)
 
-    def write_to_stats(self, field_name, parsed_data, position, selector_type,
-                       name=None):
+    def write_to_stats(
+        self, field_name, parsed_data, position, selector_type, name=None
+    ):
         """Responsible for logging the parser rules usage.
 
         NOTES: It's hard to easily denote which parser rule hasn't produced any
@@ -117,7 +119,7 @@ class ItemLoader(ItemLoaderOG):
         )
 
         if name:
-            parser_label += f'/{name}'
+            parser_label += f"/{name}"
 
         if parsed_data in (None, []):
             parser_label += "/missing"
