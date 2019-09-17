@@ -16,4 +16,4 @@ build:
 	python3 setup.py sdist bdist_wheel
 
 clean:
-	rm -rf *.egg-info .eggs dist .pytest_cache .tox dist/ build/
+	rm -rf *.egg-info .eggs .pytest_cache .tox dist/ build/
