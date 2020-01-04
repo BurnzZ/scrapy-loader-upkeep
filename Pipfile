@@ -9,6 +9,7 @@ mock = "*"
 tox = "*"
 codecov = "*"
 pytest-cov = "*"
+twine = "*"
 
 [packages]
 scrapy = "*"
