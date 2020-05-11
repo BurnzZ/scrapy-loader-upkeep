@@ -1,3 +1,6 @@
+**DEPRECATED**: This will be integrated into https://github.com/scrapy/itemloaders
+and will be maintained in that repo moving forward.
+
 scrapy-loader-upkeep 
 ====================
 
